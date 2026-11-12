@@ -29,6 +29,7 @@ flowchart TB
 
 - **Isolamento Estrito por Usuário (`One-to-Many`):** Nenhum dado é global. Todas as consultas no Cloud Firestore utilizam `where("userId", "==", currentUser.uid)` combinadas com listeners em tempo real (`onSnapshot`).
 - **Modo Híbrido de Contingência Local:** Enquanto as chaves em `firebase-config.js` estiverem vazias, a plataforma ativa automaticamente um motor multi-usuário local isolado por `uid` com suporte a upload via `FileReader` (Data URL), permitindo testar todo o fluxo imediatamente antes de conectar ao Firebase Console.
+- **Arquitetura CSS Modularizada (`styles/`):** Folhas de estilo desacopladas por responsabilidade (`tokens.css`, `base.css`, `auth.css`, `layout.css`, `components.css`, `cards.css` e `responsive.css`) e orquestradas via `style.css`.
 
 ---
 
