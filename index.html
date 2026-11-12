@@ -3,94 +3,316 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="CHRONO TM-01 — Gerenciador de Tarefas tátil de alta precisão com arquitetura reativa em Vanilla JS." />
-  <title>CHRONO // TM-01 — Tactile Task Manager</title>
+  <meta name="description" content="CHRONO TM-02 — Plataforma Multi-Usuário de Gerenciamento de Tarefas com Firebase Auth, Cloud Firestore e Firebase Storage." />
+  <title>CHRONO // TM-02 — Multi-User Tactile Task Platform</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="app-shell">
-    <!-- PAINEL DE COMANDO LATERAL (ASIDE) -->
-    <aside class="command-panel" aria-label="Painel de Comando e Criação de Tarefas">
-      <div class="brand-header">
+  <!-- OVERLAY GLOBAL DE CARREGAMENTO (AUTH / SYNC SPINNER) -->
+  <div id="global-loader" class="global-loader" role="status" aria-live="polite" hidden>
+    <div class="loader-chassis">
+      <span class="braun-spinner" aria-hidden="true"></span>
+      <span id="global-loader-text" class="loader-text">SINCRONIZANDO TELEMETRIA...</span>
+    </div>
+  </div>
+
+  <!-- BANNER INFORMATIVO DO MODO DE EXECUÇÃO (FIREBASE CLOUD VS CONTINGÊNCIA) -->
+  <div id="connection-banner" class="connection-banner" role="status" aria-live="polite" hidden></div>
+
+  <!-- ========================================================================
+       TELA 1: GATEWAY DE AUTENTICAÇÃO (LOGIN & CADASTRO)
+       ======================================================================== -->
+  <section id="auth-screen" class="auth-screen" aria-label="Autenticação da Plataforma">
+    <div class="auth-chassis">
+      <header class="auth-header">
         <div class="brand-mark">
           <span class="signal-dot" aria-hidden="true"></span>
-          <span class="brand-code">CHRONO // TM-01</span>
+          <span class="brand-code">CHRONO // TM-02 CLOUD</span>
         </div>
-        <span class="brand-subtitle">TACTILE TASK SYSTEM</span>
+        <span class="brand-subtitle">MULTI-TENANT TASK INSTRUMENT</span>
+        <h1 class="auth-title">Acesso ao Terminal</h1>
+        <p class="auth-desc">
+          Identifique-se para sincronizar suas operações, categorias personalizadas e anexos visuais no Cloud Firestore.
+        </p>
+      </header>
+
+      <!-- Seletor de Modo: Login vs Cadastro -->
+      <div class="auth-tabs" role="tablist" aria-label="Alternar entre Login e Cadastro">
+        <button
+          type="button"
+          id="tab-login"
+          class="auth-tab active"
+          role="tab"
+          aria-selected="true"
+          data-auth-mode="login"
+        >
+          ENTRAR NA CONTA
+        </button>
+        <button
+          type="button"
+          id="tab-register"
+          class="auth-tab"
+          role="tab"
+          aria-selected="false"
+          data-auth-mode="register"
+        >
+          CRIAR NOVA CONTA
+        </button>
       </div>
 
-      <form id="task-form" class="task-form" novalidate>
-        <div class="panel-section-header">
-          <h2 class="panel-title">NOVA OPERAÇÃO</h2>
-          <kbd class="shortcut-hint" title="Atalho para focar no título">Alt + N</kbd>
+      <form id="auth-form" class="auth-form" novalidate>
+        <!-- Campos exclusivos de Cadastro (Nome e Foto de Perfil) -->
+        <div id="register-fields" class="register-only-fields" hidden>
+          <div class="form-field">
+            <label for="auth-name" class="field-label">NOME DO OPERADOR <span class="req">*</span></label>
+            <input
+              type="text"
+              id="auth-name"
+              class="field-input"
+              placeholder="Ex: André Passos"
+              maxlength="60"
+              autocomplete="name"
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="auth-avatar" class="field-label">FOTO DE PERFIL (AVATAR OPCIONAL)</label>
+            <div class="file-upload-zone">
+              <input
+                type="file"
+                id="auth-avatar"
+                class="file-input-hidden"
+                accept="image/png,image/jpeg,image/webp,image/gif"
+              />
+              <label for="auth-avatar" class="btn-tactile btn-file-trigger">
+                <span>SELECIONAR IMAGEM DE PERFIL</span>
+              </label>
+              <div id="auth-avatar-preview-wrap" class="upload-preview-chip" hidden>
+                <img id="auth-avatar-preview" src="" alt="Prévia do Avatar" class="avatar-thumb-sm" />
+                <span id="auth-avatar-name" class="upload-file-name"></span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="form-field">
-          <label for="task-title" class="field-label">TÍTULO DA TAREFA <span class="req">*</span></label>
+          <label for="auth-email" class="field-label">E-MAIL DE ACESSO <span class="req">*</span></label>
           <input
-            type="text"
-            id="task-title"
-            name="title"
-            class="field-input"
-            placeholder="Ex: Revisar arquitetura do módulo..."
-            maxlength="90"
-            required
-            autocomplete="off"
-          />
-        </div>
-
-        <div class="form-field">
-          <label for="task-desc" class="field-label">ESPECIFICAÇÃO / DESCRIÇÃO</label>
-          <textarea
-            id="task-desc"
-            name="description"
-            class="field-input field-textarea"
-            placeholder="Detalhes técnicos, links ou critérios de conclusão..."
-            rows="3"
-            maxlength="320"
-          ></textarea>
-        </div>
-
-        <div class="form-field">
-          <label for="task-deadline" class="field-label">PRAZO LIMITE (DEADLINE) <span class="req">*</span></label>
-          <input
-            type="datetime-local"
-            id="task-deadline"
-            name="deadline"
+            type="email"
+            id="auth-email"
             class="field-input field-mono"
+            placeholder="operador@dominio.com"
             required
+            autocomplete="email"
           />
         </div>
 
-        <div class="form-row-2col">
-          <div class="form-field">
-            <label for="task-category" class="field-label">CATEGORIA</label>
-            <select id="task-category" name="category" class="field-input field-select">
-              <option value="Trabalho">Trabalho</option>
-              <option value="Casa">Casa</option>
-              <option value="Escola">Escola</option>
-              <option value="Compras">Compras</option>
-            </select>
-          </div>
-
-          <div class="form-field">
-            <label for="task-priority" class="field-label">PRIORIDADE</label>
-            <select id="task-priority" name="priority" class="field-input field-select">
-              <option value="Média" selected>Média</option>
-              <option value="Alta">Alta</option>
-              <option value="Baixa">Baixa</option>
-            </select>
-          </div>
+        <div class="form-field">
+          <label for="auth-password" class="field-label">SENHA DE SEGURANÇA (MÍN. 6 CARACTERES) <span class="req">*</span></label>
+          <input
+            type="password"
+            id="auth-password"
+            class="field-input field-mono"
+            placeholder="••••••••"
+            minlength="6"
+            required
+            autocomplete="current-password"
+          />
         </div>
 
-        <button type="submit" class="btn-tactile btn-primary-orange">
+        <button type="submit" id="btn-auth-submit" class="btn-tactile btn-primary-orange btn-full">
           <span class="btn-led" aria-hidden="true"></span>
-          <span>REGISTRAR TAREFA</span>
+          <span id="btn-auth-spinner" class="inline-spinner" hidden aria-hidden="true"></span>
+          <span id="btn-auth-text">INICIAR SESSÃO SEGURA</span>
         </button>
       </form>
+
+      <footer class="auth-footer">
+        <button type="button" id="auth-theme-toggle" class="btn-tactile btn-subtle">
+          ALTERNAR TEMA (CLARO / ESCURO)
+        </button>
+      </footer>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       TELA 2: DASHBOARD PRINCIPAL MULTI-USUÁRIO (OCULTO ATÉ AUTENTICAR)
+       ======================================================================== -->
+  <div id="app-shell" class="app-shell" hidden>
+    <!-- PAINEL DE COMANDO LATERAL (ASIDE) -->
+    <aside class="command-panel" aria-label="Painel de Comando, Perfil e Criação">
+      <div class="panel-top-stack">
+        <div class="brand-header">
+          <div class="brand-mark">
+            <span class="signal-dot" aria-hidden="true"></span>
+            <span class="brand-code">CHRONO // TM-02</span>
+          </div>
+          <span class="brand-subtitle">CLOUD WORKSPACE</span>
+        </div>
+
+        <!-- MÓDULO DE PERFIL DO USUÁRIO AUTENTICADO -->
+        <section class="user-profile-card" aria-label="Perfil do Usuário Ativo">
+          <div class="profile-main">
+            <div class="profile-avatar-wrapper">
+              <img
+                id="user-avatar-img"
+                src=""
+                alt="Foto de perfil do usuário"
+                class="profile-avatar"
+              />
+              <label
+                for="profile-avatar-update"
+                class="avatar-edit-badge"
+                title="Atualizar foto de perfil"
+                aria-label="Atualizar foto de perfil"
+              >
+                ✎
+              </label>
+              <input
+                type="file"
+                id="profile-avatar-update"
+                class="file-input-hidden"
+                accept="image/png,image/jpeg,image/webp"
+              />
+            </div>
+            <div class="profile-info">
+              <strong id="user-display-name" class="profile-name">Operador</strong>
+              <span id="user-display-email" class="profile-email">---</span>
+            </div>
+          </div>
+          <button type="button" id="btn-logout" class="btn-tactile btn-subtle btn-logout">
+            ENCERRAR SESSÃO
+          </button>
+        </section>
+
+        <!-- FORMULÁRIO DE CRIAÇÃO DE TAREFA COM UPLOAD DE IMAGEM -->
+        <form id="task-form" class="task-form" novalidate>
+          <div class="panel-section-header">
+            <h2 class="panel-title">NOVA OPERAÇÃO</h2>
+            <kbd class="shortcut-hint" title="Atalho para focar no título">Alt + N</kbd>
+          </div>
+
+          <div class="form-field">
+            <label for="task-title" class="field-label">TÍTULO DA TAREFA <span class="req">*</span></label>
+            <input
+              type="text"
+              id="task-title"
+              name="title"
+              class="field-input"
+              placeholder="Ex: Deploy do serviço de pagamentos..."
+              maxlength="90"
+              required
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="form-field">
+            <label for="task-desc" class="field-label">ESPECIFICAÇÃO / DESCRIÇÃO</label>
+            <textarea
+              id="task-desc"
+              name="description"
+              class="field-input field-textarea"
+              placeholder="Detalhes técnicos, critérios de aceite ou observações..."
+              rows="2"
+              maxlength="320"
+            ></textarea>
+          </div>
+
+          <div class="form-field">
+            <label for="task-deadline" class="field-label">PRAZO LIMITE (DEADLINE) <span class="req">*</span></label>
+            <input
+              type="datetime-local"
+              id="task-deadline"
+              name="deadline"
+              class="field-input field-mono"
+              required
+            />
+          </div>
+
+          <div class="form-row-2col">
+            <div class="form-field">
+              <label for="task-category" class="field-label">CATEGORIA</label>
+              <select id="task-category" name="categoryId" class="field-input field-select" required></select>
+            </div>
+
+            <div class="form-field">
+              <label for="task-priority" class="field-label">PRIORIDADE</label>
+              <select id="task-priority" name="priority" class="field-input field-select">
+                <option value="Média" selected>Média</option>
+                <option value="Alta">Alta</option>
+                <option value="Baixa">Baixa</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- UPLOAD DE FOTO / ANEXO DA TAREFA (FIREBASE STORAGE) -->
+          <div class="form-field">
+            <label for="task-image" class="field-label">ANEXO VISUAL (FOTO DA TAREFA)</label>
+            <div class="file-upload-zone">
+              <input
+                type="file"
+                id="task-image"
+                class="file-input-hidden"
+                accept="image/png,image/jpeg,image/webp,image/gif"
+              />
+              <label for="task-image" class="btn-tactile btn-file-trigger">
+                <span>+ ANEXAR IMAGEM AO CARD</span>
+              </label>
+              <div id="task-image-preview-wrap" class="upload-preview-chip" hidden>
+                <img id="task-image-preview" src="" alt="Prévia do anexo" class="avatar-thumb-sm" />
+                <span id="task-image-name" class="upload-file-name"></span>
+                <button type="button" id="btn-clear-task-image" class="btn-chip-remove" aria-label="Remover imagem selecionada">×</button>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" id="btn-submit-task" class="btn-tactile btn-primary-orange">
+            <span class="btn-led" aria-hidden="true"></span>
+            <span id="task-submit-spinner" class="inline-spinner" hidden aria-hidden="true"></span>
+            <span id="task-submit-text">REGISTRAR TAREFA</span>
+          </button>
+        </form>
+
+        <!-- GERENCIADOR DINÂMICO DE CATEGORIAS PERSONALIZADAS (CRUD) -->
+        <section class="category-manager" aria-label="Gerenciador de Categorias Personalizadas">
+          <div class="panel-section-header">
+            <h2 class="panel-title">CATEGORIAS DO USUÁRIO</h2>
+          </div>
+
+          <form id="category-form" class="category-form" novalidate>
+            <input type="hidden" id="category-edit-id" value="" />
+            <div class="category-input-row">
+              <input
+                type="text"
+                id="category-name-input"
+                class="field-input field-input-sm"
+                placeholder="Nova categoria..."
+                maxlength="28"
+                required
+              />
+              <input
+                type="color"
+                id="category-color-input"
+                class="color-picker-tactile"
+                value="#d97706"
+                title="Escolher cor da categoria"
+                aria-label="Cor da categoria"
+              />
+              <button type="submit" id="btn-save-category" class="btn-tactile btn-sm">
+                <span id="category-save-label">CRIAR</span>
+              </button>
+              <button type="button" id="btn-cancel-category-edit" class="btn-tactile btn-sm btn-subtle" hidden>
+                ×
+              </button>
+            </div>
+          </form>
+
+          <ul id="custom-categories-list" class="custom-categories-list" aria-live="polite"></ul>
+        </section>
+      </div>
 
       <footer class="panel-footer">
         <div class="system-status">
@@ -112,7 +334,7 @@
       <!-- CABEÇALHO SUPERIOR -->
       <header class="workspace-header">
         <div class="header-title-group">
-          <p class="eyebrow-mono">UNIDADE DE CONTROLE CRONOLÓGICO</p>
+          <p class="eyebrow-mono">UNIDADE DE CONTROLE MULTI-TENANT</p>
           <h1 class="workspace-heading">Painel de Execução</h1>
         </div>
 
@@ -127,13 +349,7 @@
             id="btn-test-beep"
             class="btn-tactile btn-icon-label"
             title="Testar alerta sonoro Braun (Web Audio API) e Toast"
-            aria-label="Testar alerta sonoro e visual"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
-              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-            </svg>
             <span class="btn-text-mono">TESTE ACÚSTICO</span>
           </button>
 
@@ -151,9 +367,9 @@
       </header>
 
       <!-- BARRA DE MÉTRICAS -->
-      <section class="metrics-strip" aria-label="Métricas de tarefas em tempo real" aria-live="polite">
+      <section class="metrics-strip" aria-label="Métricas de tarefas do usuário em tempo real" aria-live="polite">
         <article class="metric-card">
-          <span class="metric-label">TOTAL REGISTRADO</span>
+          <span class="metric-label">TOTAL DO USUÁRIO</span>
           <strong id="stat-total" class="metric-value">00</strong>
         </article>
         <article class="metric-card">
@@ -189,22 +405,16 @@
           </div>
 
           <div class="utility-actions">
-            <button type="button" id="btn-clear-completed" class="btn-tactile btn-subtle" title="Remover todas as tarefas já concluídas">
+            <button type="button" id="btn-clear-completed" class="btn-tactile btn-subtle">
               LIMPAR CONCLUÍDAS
             </button>
           </div>
         </div>
 
         <div class="filters-grid">
-          <div class="filter-group" role="group" aria-label="Filtrar por Categoria">
+          <div class="filter-group" role="group" aria-label="Filtrar por Categoria Personalizada">
             <span class="filter-group-label">CATEGORIA:</span>
-            <div class="filter-pills" id="category-filters">
-              <button type="button" class="filter-pill active" data-filter-category="Todas">Todas</button>
-              <button type="button" class="filter-pill" data-filter-category="Trabalho">Trabalho</button>
-              <button type="button" class="filter-pill" data-filter-category="Casa">Casa</button>
-              <button type="button" class="filter-pill" data-filter-category="Escola">Escola</button>
-              <button type="button" class="filter-pill" data-filter-category="Compras">Compras</button>
-            </div>
+            <div class="filter-pills" id="category-filters"></div>
           </div>
 
           <div class="filter-group" role="group" aria-label="Filtrar por Prioridade">
@@ -220,10 +430,10 @@
       </section>
 
       <!-- LISTAGEM DE TAREFAS + EMPTY STATE TÁTIL -->
-      <section class="tasks-stage" aria-label="Lista de Tarefas">
+      <section class="tasks-stage" aria-label="Lista de Tarefas do Usuário">
         <div id="task-list" class="task-list" aria-live="polite" aria-atomic="false"></div>
 
-        <!-- EMPTY STATE TÁTIL (P2) -->
+        <!-- EMPTY STATE TÁTIL -->
         <section id="empty-state" class="empty-state" hidden aria-live="polite">
           <div class="empty-illustration" aria-hidden="true">
             <svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -234,14 +444,14 @@
               <circle cx="48" cy="48" r="3" fill="#FF4F00" />
             </svg>
           </div>
-          <h2 id="empty-title" class="empty-title">Nenhuma operação ativa no radar</h2>
+          <h2 id="empty-title" class="empty-title">Nenhuma operação ativa para este usuário</h2>
           <p id="empty-desc" class="empty-description">
-            Sua fila cronológica está vazia ou nenhuma tarefa corresponde aos filtros aplicados no momento.
+            Sua fila pessoal está vazia ou nenhuma tarefa corresponde aos filtros selecionados.
           </p>
           <div class="empty-actions">
             <button type="button" id="btn-load-demo" class="btn-tactile btn-primary-orange">
               <span class="btn-led" aria-hidden="true"></span>
-              <span>CARREGAR DADOS DE DEMONSTRAÇÃO</span>
+              <span>GERAR DADOS DE DEMONSTRAÇÃO NA CONTA</span>
             </button>
             <button type="button" id="btn-reset-filters" class="btn-tactile btn-subtle" hidden>
               LIMPAR FILTROS ATIVOS
@@ -252,9 +462,21 @@
     </main>
   </div>
 
-  <!-- CONTAINER FLUTUANTE DE TOAST NOTIFICATIONS (P0) -->
+  <!-- MODAL DE VISUALIZAÇÃO AMPLIADA DE ANEXO (LIGHTBOX) -->
+  <div id="image-modal" class="image-modal" role="dialog" aria-modal="true" aria-label="Visualização ampliada do anexo" hidden>
+    <div class="image-modal-backdrop" id="image-modal-backdrop"></div>
+    <div class="image-modal-content">
+      <div class="image-modal-header">
+        <span id="image-modal-caption" class="brand-code">ANEXO DA OPERAÇÃO</span>
+        <button type="button" id="btn-close-modal" class="btn-tactile btn-sm">FECHAR [ESC]</button>
+      </div>
+      <img id="image-modal-target" src="" alt="Imagem anexada à tarefa" class="image-modal-img" />
+    </div>
+  </div>
+
+  <!-- CONTAINER FLUTUANTE DE TOAST NOTIFICATIONS -->
   <aside id="toast-container" class="toast-container" aria-live="assertive" aria-atomic="true"></aside>
 
-  <script src="script.js"></script>
+  <script type="module" src="script.js"></script>
 </body>
 </html>
