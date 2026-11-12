@@ -1,0 +1,126 @@
+/* ==========================================================================
+   CHRONO // TM-02 — BASE RESET, SCROLLBARS, LOADERS & STATUS BANNER
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  line-height: 1.5;
+  min-height: 100vh;
+  transition:
+    background-color 0.25s var(--ease-snappy),
+    color 0.25s var(--ease-snappy);
+}
+
+/* Scrollbar Industrial Customizada */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-panel);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-signal);
+}
+
+/* Seleção de Texto */
+::selection {
+  background-color: var(--accent-signal);
+  color: var(--text-on-accent);
+}
+
+/* Spinners & Overlay Global */
+.global-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background-color: rgba(12, 14, 17, 0.68);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-chassis {
+  background-color: var(--bg-surface);
+  border: 2px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.95rem;
+  box-shadow: var(--shadow-card-hover);
+}
+
+.braun-spinner,
+.inline-spinner {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  border-top-color: var(--accent-signal);
+  animation: chronoSpin 0.68s linear infinite;
+  display: inline-block;
+}
+
+.inline-spinner {
+  width: 14px;
+  height: 14px;
+  border-color: rgba(255, 255, 255, 0.35);
+  border-top-color: #ffffff;
+}
+
+@keyframes chronoSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loader-text {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--text-primary);
+}
+
+/* Banner Superior de Telemetria / Conexão */
+.connection-banner {
+  background-color: var(--bg-panel);
+  border-bottom: 1px solid var(--border-strong);
+  padding: 0.45rem 1.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.71rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  text-align: center;
+  color: var(--text-secondary);
+}
