@@ -1,0 +1,47 @@
+/* ==========================================================================
+   CHRONO // TM-02 — RESPONSIVE BREAKPOINTS & MOTION ACCESSIBILITY
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .command-panel {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border-strong);
+  }
+
+  .workspace {
+    padding: 1.5rem 1.25rem 3rem;
+  }
+
+  .metrics-strip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .metrics-strip,
+  .form-row-2col,
+  .task-list {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-chassis {
+    padding: 1.75rem 1.35rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
