@@ -1,0 +1,141 @@
+/* ==========================================================================
+   CHRONO // TM-02 — DESIGN TOKENS & THEME VARIABLES (LIGHT / DARK)
+   Estética: Tactile Editorial Chrono (Braun ET66 + Linear Precision)
+   ========================================================================== */
+
+:root {
+  /* Superfícies — Light Mode (Warm Industrial Stone) */
+  --bg-canvas: #f3f1ec;
+  --bg-panel: #e8e4dc;
+  --bg-surface: #ffffff;
+  --bg-surface-elevated: #faf9f5;
+  --bg-input: #ffffff;
+  --bg-pill: #dfdad0;
+
+  /* Tipografia & Hierarquia de Contraste */
+  --text-primary: #121316;
+  --text-secondary: #45484f;
+  --text-muted: #72767f;
+  --text-on-accent: #ffffff;
+
+  /* Bordas & Divisores de Chassis */
+  --border-subtle: #d8d3c8;
+  --border-strong: #b4ae9f;
+  --border-focus: #ff4f00;
+  --bevel-highlight: rgba(255, 255, 255, 0.75);
+
+  /* Acentos Industriais (Signal Orange — Zero Roxo/Indigo) */
+  --accent-signal: #ff4f00;
+  --accent-signal-hover: #e04400;
+  --accent-signal-soft: rgba(255, 79, 0, 0.12);
+
+  /* Semântica de Status & Prioridade */
+  --prio-high: #dc2626;
+  --prio-high-bg: rgba(220, 38, 38, 0.1);
+  --prio-med: #d97706;
+  --prio-med-bg: rgba(217, 119, 6, 0.12);
+  --prio-low: #059669;
+  --prio-low-bg: rgba(5, 150, 105, 0.11);
+
+  /* Elevação & Sombras Táteis Mecânicas */
+  --shadow-tactile:
+    inset 0 1px 0 var(--bevel-highlight),
+    0 2px 0 var(--border-strong),
+    0 4px 8px rgba(18, 19, 22, 0.07);
+  --shadow-tactile-hover:
+    inset 0 1px 0 var(--bevel-highlight),
+    0 3px 0 var(--border-strong),
+    0 7px 14px rgba(18, 19, 22, 0.11);
+  --shadow-tactile-active:
+    inset 0 1px 2px rgba(0, 0, 0, 0.12),
+    0 0px 0 var(--border-strong),
+    0 1px 2px rgba(18, 19, 22, 0.08);
+  --shadow-orange:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 3px 0 #b33600,
+    0 6px 16px rgba(255, 79, 0, 0.28);
+  --shadow-orange-active:
+    inset 0 1px 3px rgba(0, 0, 0, 0.25),
+    0 0px 0 #b33600,
+    0 2px 4px rgba(255, 79, 0, 0.2);
+  --shadow-card:
+    inset 0 1px 0 var(--bevel-highlight),
+    0 2px 6px rgba(18, 19, 22, 0.04),
+    0 1px 2px rgba(18, 19, 22, 0.06);
+  --shadow-card-hover:
+    inset 0 1px 0 var(--bevel-highlight),
+    0 12px 26px rgba(18, 19, 22, 0.09),
+    0 3px 8px rgba(18, 19, 22, 0.05);
+
+  /* Famílias Tipográficas */
+  --font-sans: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Raios Geométricos */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  /* Curvas Físicas */
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-snappy: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme="dark"] {
+  --bg-canvas: #0c0e11;
+  --bg-panel: #12151a;
+  --bg-surface: #181c22;
+  --bg-surface-elevated: #1f242c;
+  --bg-input: #0f1216;
+  --bg-pill: #252b35;
+
+  --text-primary: #f3f4f6;
+  --text-secondary: #b0b7c3;
+  --text-muted: #78808f;
+  --text-on-accent: #ffffff;
+
+  --border-subtle: #252b34;
+  --border-strong: #37404e;
+  --border-focus: #ff5912;
+  --bevel-highlight: rgba(255, 255, 255, 0.05);
+
+  --accent-signal: #ff5912;
+  --accent-signal-hover: #ff6e2e;
+  --accent-signal-soft: rgba(255, 89, 18, 0.16);
+
+  --prio-high: #f87171;
+  --prio-high-bg: rgba(239, 68, 68, 0.16);
+  --prio-med: #fbbf24;
+  --prio-med-bg: rgba(245, 158, 11, 0.16);
+  --prio-low: #34d399;
+  --prio-low-bg: rgba(16, 185, 129, 0.16);
+
+  --shadow-tactile:
+    inset 0 1px 0 var(--bevel-highlight),
+    0 2px 0 #060709,
+    0 4px 10px rgba(0, 0, 0, 0.38);
+  --shadow-tactile-hover:
+    inset 0 1px 0 var(--bevel-highlight),
+    0 3px 0 #060709,
+    0 7px 16px rgba(0, 0, 0, 0.48);
+  --shadow-tactile-active:
+    inset 0 1px 2px rgba(0, 0, 0, 0.4),
+    0 0px 0 #060709,
+    0 1px 3px rgba(0, 0, 0, 0.32);
+  --shadow-orange:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 3px 0 #992e00,
+    0 6px 18px rgba(255, 89, 18, 0.34);
+  --shadow-orange-active:
+    inset 0 1px 3px rgba(0, 0, 0, 0.35),
+    0 0px 0 #992e00,
+    0 2px 4px rgba(255, 89, 18, 0.24);
+  --shadow-card:
+    inset 0 1px 0 var(--bevel-highlight),
+    0 4px 12px rgba(0, 0, 0, 0.28),
+    0 1px 2px rgba(0, 0, 0, 0.32);
+  --shadow-card-hover:
+    inset 0 1px 0 var(--bevel-highlight),
+    0 14px 30px rgba(0, 0, 0, 0.44),
+    0 4px 10px rgba(0, 0, 0, 0.32);
+}
