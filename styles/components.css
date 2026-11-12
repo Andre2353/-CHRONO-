@@ -1,0 +1,493 @@
+/* ==========================================================================
+   CHRONO // TM-02 — TACTILE COMPONENTS, PROFILE, FORMS & CATEGORY MANAGER
+   ========================================================================== */
+
+/* Módulo de Perfil do Usuário no Painel Lateral */
+.user-profile-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-card);
+}
+
+.profile-main {
+  display: flex;
+  align-items: center;
+  gap: 0.78rem;
+}
+
+.profile-avatar-wrapper {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+}
+
+.profile-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--accent-signal);
+  background-color: var(--bg-panel);
+}
+
+.avatar-edit-badge {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--text-primary);
+  color: var(--bg-surface);
+  font-size: 0.68rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid var(--bg-surface);
+  transition: transform 0.14s var(--ease-spring);
+}
+
+.avatar-edit-badge:hover {
+  transform: scale(1.12);
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.profile-name {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-email {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-logout {
+  width: 100%;
+}
+
+/* Formulários e Campos de Entrada */
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: 1.25rem;
+}
+
+.panel-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-title {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+}
+
+.shortcut-hint,
+.search-kbd,
+.legend-item kbd {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  padding: 0.14rem 0.42rem;
+  border-radius: 4px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  color: var(--text-secondary);
+  box-shadow: 0 1px 0 var(--border-strong);
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.34rem;
+}
+
+.field-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+
+.req {
+  color: var(--accent-signal);
+}
+
+.field-input {
+  width: 100%;
+  padding: 0.62rem 0.78rem;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.18s var(--ease-snappy), box-shadow 0.18s var(--ease-snappy);
+}
+
+.field-input-sm {
+  padding: 0.46rem 0.65rem;
+  font-size: 0.82rem;
+}
+
+.field-input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px var(--accent-signal-soft);
+}
+
+.field-textarea {
+  resize: vertical;
+  min-height: 62px;
+}
+
+.field-mono {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}
+
+.form-row-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+
+/* Upload de Arquivos & Pré-visualização (File API) */
+.file-input-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.file-upload-zone {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.btn-file-trigger {
+  width: 100%;
+  font-size: 0.71rem;
+  padding: 0.56rem 0.75rem;
+  border-style: dashed;
+}
+
+.upload-preview-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.38rem 0.6rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+}
+
+.avatar-thumb-sm {
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid var(--border-strong);
+}
+
+.upload-file-name {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-chip-remove {
+  background: none;
+  border: none;
+  color: var(--prio-high);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0 0.25rem;
+}
+
+/* Gerenciador Dinâmico de Categorias Customizadas */
+.category-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.category-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.color-picker-tactile {
+  width: 36px;
+  height: 34px;
+  padding: 2px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background-color: var(--bg-surface);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.custom-categories-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: 155px;
+  overflow-y: auto;
+}
+
+.cat-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.38rem 0.62rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+}
+
+.cat-item-left {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.cat-color-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cat-item-name {
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cat-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.btn-cat-mini {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  padding: 0.16rem 0.42rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-surface-elevated);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.14s ease;
+}
+
+.btn-cat-mini:hover {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+}
+
+.btn-cat-mini.danger:hover {
+  border-color: var(--prio-high);
+  color: var(--prio-high);
+}
+
+/* Botões Físicos Táteis (Inspiração Braun ET66) */
+.btn-tactile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 0.68rem 0.95rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  cursor: pointer;
+  user-select: none;
+  box-shadow: var(--shadow-tactile);
+  transition:
+    transform 0.12s var(--ease-spring),
+    box-shadow 0.12s var(--ease-spring),
+    background-color 0.15s ease;
+}
+
+.btn-tactile:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-tactile-hover);
+}
+
+.btn-tactile:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: var(--shadow-tactile-active);
+}
+
+.btn-tactile:focus-visible {
+  outline: 2px solid var(--accent-signal);
+  outline-offset: 2px;
+}
+
+.btn-tactile:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.btn-sm {
+  padding: 0.45rem 0.68rem;
+  font-size: 0.7rem;
+}
+
+.btn-primary-orange {
+  background-color: var(--accent-signal);
+  border-color: #c23b00;
+  color: var(--text-on-accent);
+  box-shadow: var(--shadow-orange);
+  padding: 0.78rem 1.1rem;
+}
+
+.btn-primary-orange:hover:not(:disabled) {
+  background-color: var(--accent-signal-hover);
+  box-shadow: var(--shadow-orange);
+}
+
+.btn-primary-orange:active:not(:disabled) {
+  box-shadow: var(--shadow-orange-active);
+}
+
+.btn-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #fff3eb;
+  box-shadow: 0 0 6px #ffffff;
+}
+
+.btn-subtle {
+  font-size: 0.71rem;
+  padding: 0.52rem 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Rodapé do Painel de Comando */
+.panel-footer {
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 0.95rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.system-status {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.status-label {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+.btn-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.46rem 0.75rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-surface);
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.69rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.btn-status-pill:hover {
+  border-color: var(--accent-signal);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--prio-med);
+}
+
+.status-dot.granted {
+  background-color: var(--prio-low);
+}
+
+.status-dot.denied {
+  background-color: var(--prio-high);
+}
+
+.shortcuts-legend {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
