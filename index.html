@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="CHRONO TM-01 — Gerenciador de Tarefas tátil de alta precisão com arquitetura reativa em Vanilla JS." />
+  <title>CHRONO // TM-01 — Tactile Task Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <!-- PAINEL DE COMANDO LATERAL (ASIDE) -->
+    <aside class="command-panel" aria-label="Painel de Comando e Criação de Tarefas">
+      <div class="brand-header">
+        <div class="brand-mark">
+          <span class="signal-dot" aria-hidden="true"></span>
+          <span class="brand-code">CHRONO // TM-01</span>
+        </div>
+        <span class="brand-subtitle">TACTILE TASK SYSTEM</span>
+      </div>
+
+      <form id="task-form" class="task-form" novalidate>
+        <div class="panel-section-header">
+          <h2 class="panel-title">NOVA OPERAÇÃO</h2>
+          <kbd class="shortcut-hint" title="Atalho para focar no título">Alt + N</kbd>
+        </div>
+
+        <div class="form-field">
+          <label for="task-title" class="field-label">TÍTULO DA TAREFA <span class="req">*</span></label>
+          <input
+            type="text"
+            id="task-title"
+            name="title"
+            class="field-input"
+            placeholder="Ex: Revisar arquitetura do módulo..."
+            maxlength="90"
+            required
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="form-field">
+          <label for="task-desc" class="field-label">ESPECIFICAÇÃO / DESCRIÇÃO</label>
+          <textarea
+            id="task-desc"
+            name="description"
+            class="field-input field-textarea"
+            placeholder="Detalhes técnicos, links ou critérios de conclusão..."
+            rows="3"
+            maxlength="320"
+          ></textarea>
+        </div>
+
+        <div class="form-field">
+          <label for="task-deadline" class="field-label">PRAZO LIMITE (DEADLINE) <span class="req">*</span></label>
+          <input
+            type="datetime-local"
+            id="task-deadline"
+            name="deadline"
+            class="field-input field-mono"
+            required
+          />
+        </div>
+
+        <div class="form-row-2col">
+          <div class="form-field">
+            <label for="task-category" class="field-label">CATEGORIA</label>
+            <select id="task-category" name="category" class="field-input field-select">
+              <option value="Trabalho">Trabalho</option>
+              <option value="Casa">Casa</option>
+              <option value="Escola">Escola</option>
+              <option value="Compras">Compras</option>
+            </select>
+          </div>
+
+          <div class="form-field">
+            <label for="task-priority" class="field-label">PRIORIDADE</label>
+            <select id="task-priority" name="priority" class="field-input field-select">
+              <option value="Média" selected>Média</option>
+              <option value="Alta">Alta</option>
+              <option value="Baixa">Baixa</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-tactile btn-primary-orange">
+          <span class="btn-led" aria-hidden="true"></span>
+          <span>REGISTRAR TAREFA</span>
+        </button>
+      </form>
+
+      <footer class="panel-footer">
+        <div class="system-status">
+          <span class="status-label">MOTOR DE LEMBRETES</span>
+          <button type="button" id="btn-notify-perm" class="btn-status-pill" title="Ativar notificações nativas do sistema">
+            <span id="notify-status-dot" class="status-dot"></span>
+            <span id="notify-status-text">VERIFICAR PERMISSÃO</span>
+          </button>
+        </div>
+        <div class="shortcuts-legend" aria-label="Atalhos de teclado disponíveis">
+          <div class="legend-item"><kbd>/</kbd> ou <kbd>Ctrl+K</kbd> <span>Buscar</span></div>
+          <div class="legend-item"><kbd>Alt+N</kbd> <span>Nova Tarefa</span></div>
+        </div>
+      </footer>
+    </aside>
+
+    <!-- ÁREA PRINCIPAL (MAIN WORKSPACE) -->
+    <main class="workspace" aria-label="Área Principal de Tarefas">
+      <!-- CABEÇALHO SUPERIOR -->
+      <header class="workspace-header">
+        <div class="header-title-group">
+          <p class="eyebrow-mono">UNIDADE DE CONTROLE CRONOLÓGICO</p>
+          <h1 class="workspace-heading">Painel de Execução</h1>
+        </div>
+
+        <div class="header-controls">
+          <div class="chrono-readout" aria-label="Relógio do sistema em tempo real">
+            <span class="readout-label">HORA DO SISTEMA</span>
+            <time id="live-clock" class="readout-time" datetime="">--:--:--</time>
+          </div>
+
+          <button
+            type="button"
+            id="btn-test-beep"
+            class="btn-tactile btn-icon-label"
+            title="Testar alerta sonoro Braun (Web Audio API) e Toast"
+            aria-label="Testar alerta sonoro e visual"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+            </svg>
+            <span class="btn-text-mono">TESTE ACÚSTICO</span>
+          </button>
+
+          <button
+            type="button"
+            id="theme-toggle"
+            class="btn-tactile btn-theme-switch"
+            aria-label="Alternar entre tema claro e escuro"
+            aria-pressed="false"
+          >
+            <span class="theme-indicator" aria-hidden="true"></span>
+            <span id="theme-label" class="btn-text-mono">DARK MODE</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- BARRA DE MÉTRICAS -->
+      <section class="metrics-strip" aria-label="Métricas de tarefas em tempo real" aria-live="polite">
+        <article class="metric-card">
+          <span class="metric-label">TOTAL REGISTRADO</span>
+          <strong id="stat-total" class="metric-value">00</strong>
+        </article>
+        <article class="metric-card">
+          <span class="metric-label">PENDENTES ATIVAS</span>
+          <strong id="stat-pending" class="metric-value">00</strong>
+        </article>
+        <article class="metric-card metric-card-alert">
+          <span class="metric-label">PRAZO EXPIRADO</span>
+          <strong id="stat-overdue" class="metric-value">00</strong>
+        </article>
+        <article class="metric-card metric-card-ok">
+          <span class="metric-label">CONCLUÍDAS</span>
+          <strong id="stat-completed" class="metric-value">00</strong>
+        </article>
+      </section>
+
+      <!-- BARRA DE BUSCA E FILTROS COMBINADOS (AND) -->
+      <section class="controls-bar" aria-label="Busca e filtros combinados">
+        <div class="search-toolbar">
+          <div class="search-box">
+            <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input
+              type="search"
+              id="search-input"
+              class="search-input"
+              placeholder="Filtrar por título ou descrição..."
+              aria-label="Buscar tarefas por título ou descrição"
+            />
+            <kbd class="search-kbd" aria-hidden="true">/</kbd>
+          </div>
+
+          <div class="utility-actions">
+            <button type="button" id="btn-clear-completed" class="btn-tactile btn-subtle" title="Remover todas as tarefas já concluídas">
+              LIMPAR CONCLUÍDAS
+            </button>
+          </div>
+        </div>
+
+        <div class="filters-grid">
+          <div class="filter-group" role="group" aria-label="Filtrar por Categoria">
+            <span class="filter-group-label">CATEGORIA:</span>
+            <div class="filter-pills" id="category-filters">
+              <button type="button" class="filter-pill active" data-filter-category="Todas">Todas</button>
+              <button type="button" class="filter-pill" data-filter-category="Trabalho">Trabalho</button>
+              <button type="button" class="filter-pill" data-filter-category="Casa">Casa</button>
+              <button type="button" class="filter-pill" data-filter-category="Escola">Escola</button>
+              <button type="button" class="filter-pill" data-filter-category="Compras">Compras</button>
+            </div>
+          </div>
+
+          <div class="filter-group" role="group" aria-label="Filtrar por Prioridade">
+            <span class="filter-group-label">PRIORIDADE:</span>
+            <div class="filter-pills" id="priority-filters">
+              <button type="button" class="filter-pill active" data-filter-priority="Todas">Todas</button>
+              <button type="button" class="filter-pill" data-filter-priority="Alta">Alta</button>
+              <button type="button" class="filter-pill" data-filter-priority="Média">Média</button>
+              <button type="button" class="filter-pill" data-filter-priority="Baixa">Baixa</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- LISTAGEM DE TAREFAS + EMPTY STATE TÁTIL -->
+      <section class="tasks-stage" aria-label="Lista de Tarefas">
+        <div id="task-list" class="task-list" aria-live="polite" aria-atomic="false"></div>
+
+        <!-- EMPTY STATE TÁTIL (P2) -->
+        <section id="empty-state" class="empty-state" hidden aria-live="polite">
+          <div class="empty-illustration" aria-hidden="true">
+            <svg width="96" height="96" viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="12" y="12" width="72" height="72" rx="14" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4" />
+              <circle cx="48" cy="48" r="22" stroke="currentColor" stroke-width="2" />
+              <line x1="48" y1="34" x2="48" y2="48" stroke="#FF4F00" stroke-width="3" stroke-linecap="round" />
+              <line x1="48" y1="48" x2="58" y2="54" stroke="#FF4F00" stroke-width="3" stroke-linecap="round" />
+              <circle cx="48" cy="48" r="3" fill="#FF4F00" />
+            </svg>
+          </div>
+          <h2 id="empty-title" class="empty-title">Nenhuma operação ativa no radar</h2>
+          <p id="empty-desc" class="empty-description">
+            Sua fila cronológica está vazia ou nenhuma tarefa corresponde aos filtros aplicados no momento.
+          </p>
+          <div class="empty-actions">
+            <button type="button" id="btn-load-demo" class="btn-tactile btn-primary-orange">
+              <span class="btn-led" aria-hidden="true"></span>
+              <span>CARREGAR DADOS DE DEMONSTRAÇÃO</span>
+            </button>
+            <button type="button" id="btn-reset-filters" class="btn-tactile btn-subtle" hidden>
+              LIMPAR FILTROS ATIVOS
+            </button>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <!-- CONTAINER FLUTUANTE DE TOAST NOTIFICATIONS (P0) -->
+  <aside id="toast-container" class="toast-container" aria-live="assertive" aria-atomic="true"></aside>
+
+  <script src="script.js"></script>
+</body>
+</html>
