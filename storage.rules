@@ -1,0 +1,20 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Avatares de perfil do usuário (máx. 5MB, apenas imagens)
+    match /avatars/{userId}/{allPaths=**} {
+      allow read, write: if request.auth != null
+                         && request.auth.uid == userId
+                         && request.resource.size < 5 * 1024 * 1024
+                         && request.resource.contentType.matches('image/.*');
+    }
+
+    // Anexos visuais das tarefas do usuário (máx. 5MB, apenas imagens)
+    match /tasks/{userId}/{allPaths=**} {
+      allow read, write: if request.auth != null
+                         && request.auth.uid == userId
+                         && request.resource.size < 5 * 1024 * 1024
+                         && request.resource.contentType.matches('image/.*');
+    }
+  }
+}
