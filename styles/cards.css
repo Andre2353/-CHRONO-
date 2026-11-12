@@ -1,0 +1,407 @@
+/* ==========================================================================
+   CHRONO // TM-02 — TASK CARDS, ATTACHMENTS, LIGHTBOX, EMPTY STATE & TOASTS
+   ========================================================================== */
+
+.task-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(335px, 1fr));
+  gap: 1.2rem;
+}
+
+.task-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.95rem;
+  box-shadow: var(--shadow-card);
+  transition:
+    transform 0.2s var(--ease-spring),
+    box-shadow 0.2s var(--ease-spring),
+    border-color 0.2s ease,
+    opacity 0.2s ease;
+  animation: cardEnter 0.28s var(--ease-spring) both;
+}
+
+@keyframes cardEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.task-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+  border-color: var(--border-strong);
+}
+
+/* Indicador Estrutural de Prioridade */
+.task-card[data-priority="Alta"] {
+  border-left: 4px solid var(--prio-high);
+}
+
+.task-card[data-priority="Média"] {
+  border-left: 4px solid var(--prio-med);
+}
+
+.task-card[data-priority="Baixa"] {
+  border-left: 4px solid var(--prio-low);
+}
+
+/* Alerta Visual de Tarefa com Prazo Expirado */
+.task-card.is-overdue:not(.is-completed) {
+  border-color: var(--prio-high);
+  background-image: linear-gradient(135deg, var(--prio-high-bg) 0%, transparent 45%);
+}
+
+/* Estado de Tarefa Concluída */
+.task-card.is-completed {
+  opacity: 0.62;
+  background-color: var(--bg-surface-elevated);
+}
+
+.task-card.is-completed .task-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+/* Metadados Superiores (Categoria + Prioridade) */
+.card-meta-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.badge-category,
+.badge-priority {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.22rem 0.58rem;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.badge-priority[data-prio="Alta"] {
+  color: var(--prio-high);
+  background-color: var(--prio-high-bg);
+}
+
+.badge-priority[data-prio="Média"] {
+  color: var(--prio-med);
+  background-color: var(--prio-med-bg);
+}
+
+.badge-priority[data-prio="Baixa"] {
+  color: var(--prio-low);
+  background-color: var(--prio-low-bg);
+}
+
+.high-alert-icon {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--prio-high);
+  animation: pulseAlert 1.5s infinite;
+}
+
+@keyframes pulseAlert {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0.55;
+  }
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.task-title {
+  font-size: 1.06rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.32;
+  word-break: break-word;
+}
+
+.task-desc {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  word-break: break-word;
+  white-space: pre-line;
+}
+
+/* Imagem Anexada na Tarefa */
+.card-attachment {
+  margin-top: 0.3rem;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  background-color: var(--bg-panel);
+  position: relative;
+  cursor: zoom-in;
+}
+
+.card-attachment-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.25s var(--ease-spring);
+}
+
+.card-attachment:hover .card-attachment-img {
+  transform: scale(1.03);
+}
+
+/* Rodapé do Card */
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.deadline-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.deadline-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+}
+
+.deadline-time {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.task-card.is-overdue:not(.is-completed) .deadline-time,
+.task-card.is-overdue:not(.is-completed) .deadline-label {
+  color: var(--prio-high);
+  font-weight: 700;
+}
+
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.btn-card-action {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.42rem 0.7rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background-color: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.14s var(--ease-snappy);
+}
+
+.btn-card-action.btn-complete:hover {
+  border-color: var(--prio-low);
+  color: var(--prio-low);
+  background-color: var(--prio-low-bg);
+}
+
+.btn-card-action.btn-delete:hover {
+  border-color: var(--prio-high);
+  color: var(--prio-high);
+  background-color: var(--prio-high-bg);
+}
+
+/* Modal Lightbox de Visualização de Anexo */
+.image-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.image-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(10, 12, 15, 0.82);
+  backdrop-filter: blur(4px);
+}
+
+.image-modal-content {
+  position: relative;
+  z-index: 1;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 1.1rem;
+  max-width: 840px;
+  width: 100%;
+  box-shadow: var(--shadow-card-hover);
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.image-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.image-modal-img {
+  width: 100%;
+  max-height: 75vh;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-canvas);
+}
+
+/* Empty State Tátil */
+.empty-state {
+  background-color: var(--bg-surface);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-lg);
+  padding: 3.4rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.95rem;
+  box-shadow: var(--shadow-card);
+}
+
+.empty-illustration {
+  color: var(--text-muted);
+}
+
+.empty-title {
+  font-size: 1.22rem;
+  font-weight: 700;
+}
+
+.empty-description {
+  max-width: 460px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.empty-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.45rem;
+}
+
+/* Container Flutuante de Toast Notifications */
+.toast-container {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  max-width: 380px;
+  width: calc(100vw - 3rem);
+  pointer-events: none;
+}
+
+.toast-item {
+  pointer-events: auto;
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-strong);
+  border-left: 5px solid var(--accent-signal);
+  border-radius: var(--radius-md);
+  padding: 0.95rem 1.05rem;
+  box-shadow: var(--shadow-card-hover);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  animation: toastSlideIn 0.26s var(--ease-spring) both;
+}
+
+.toast-item.toast-urgent {
+  border-left-color: var(--prio-high);
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.toast-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.toast-tag {
+  font-family: var(--font-mono);
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--accent-signal);
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.toast-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.toast-msg {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
